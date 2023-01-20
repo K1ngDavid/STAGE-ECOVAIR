@@ -1,0 +1,290 @@
+{% extends 'nav.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
+{% endblock %}
+{% block content %}
+    <div class="app-wrapper mt-xxl-5">
+
+        <div class="app-content pt-3 p-md-3 p-lg-4">
+            <div class="container-xl">
+                {% for flashSuccess in app.flashes('success') %}
+                    <div class="alert alert-success" role="alert">{{ flashSuccess }}</div>
+                {% endfor %}
+
+                <div class="row g-3 mb-4 align-items-center justify-content-between">
+                    <div class="col-auto">
+                        <h1 class="app-page-title mb-0">Deals</h1>
+                    </div>
+                    <div class="col-auto">
+                        <div class="page-utilities">
+                            <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+                                <div class="col-auto">
+{#                                    <!-- Button trigger modal -->#}
+{#                                    <button type="button" class="btn app-btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">#}
+{#                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download me-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg">#}
+{#                                            <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>#}
+{#                                            <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>#}
+{#                                        </svg>#}
+{#                                        Ajouter un commercial#}
+{#                                    </button>#}
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl">
+                                            <form class="modal-content" method="post" action="{{ path('app_admin') }}">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Ajout d'un commercial</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="email" name="insertEmail" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div><!--//row-->
+                        </div><!--//table-utilities-->
+                    </div><!--//col-auto-->
+                </div><!--//row-->
+
+
+                <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
+                    <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#orders-all" role="tab" aria-controls="orders-all" aria-selected="true">Tous</a>
+                    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#orders-paid" role="tab" aria-controls="orders-paid" aria-selected="false">Validés</a>
+                    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending" aria-selected="false">En attente</a>
+                    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Refusés</a>
+                </nav>
+
+
+                <div class="tab-content" id="orders-table-tab-content">
+                    <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+                        <div class="app-card app-card-orders-table shadow-sm mb-5">
+                            <div class="app-card-body">
+                                <div class="table-responsive">
+                                    <table class="table app-table-hover mb-0 text-left" id="myTable">
+                                        <thead>
+                                        <tr>
+                                            <th class="cell">Nom du deal</th>
+                                            <th class="cell">Code postal du deal</th>
+                                            <th class="cell">Nom du commercial</th>
+                                            <th class="cell">Nom du télépro</th>
+                                            <th class="cell">Statut du deal</th>
+                                            <th class="cell">Montant du deal</th>
+                                            <th class="cell">ID du deal</th>
+                                            <th class="cell">Pièces jointes</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for deal in deals %}
+                                        <tr>
+                                            <td class="cell">{{ deal.Deal_Name }}</td>
+                                            <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
+                                            <td class="cell">{{ deal.Commercial }}</td>
+                                            <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
+                                            {% if deal.Stage != 'Rétracté' and  deal.Stage !=  'Gagnés fermés' %}
+                                            <td class="cell"><span class="badge bg-warning">{{ deal.Stage }}</span></td>
+                                            {% else %}
+                                            <td class="cell"><span class="badge {{ deal.Stage == 'Rétracté' ? 'bg-danger' : 'bg-success' }}">{{ deal.Stage }}</span></td>
+                                            {% endif %}
+                                            <td class="cell">{{ deal.Amount }}</td>
+                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
+                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup">+ fichier</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div><!--//table-responsive-->
+                            </div><!--//app-card-body-->
+                            <div class="modal fade" id="popup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <form class="modal-content" method="post" action="{{ path('app_admin') }}">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Ajouter une pièce jointe</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group row">
+                                                <div class="d-flex justify-content-evenly">
+                                                    <label for="staticEmail" class="col-sm-2 col-form-label">Fichier(s)</label>
+                                                    <div class="col-sm-8 row" style="display: flex;position: relative;right: 100px;">
+                                                        <input type="file" name="insertEmail" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com">
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <button class="btn app-btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" name="nom-complet" id="button-name" aria-expanded="false">
+                                                            Deals
+                                                        </button>
+                                                        <ul class="dropdown-menu" id="dropdown_drop">
+                                                            <button class="dropdown-item" id="button_dropdown" type="button" href="#">test</button>
+                                                        </ul>
+                                                        <input name="nom-complet-input" id="nom-complet-input" hidden>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-xxl-5">
+                                                <label> Ajouter un commentaire :</label>
+                                                <br>
+                                                <input class="p-5 w-100">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div><!--//app-card-->
+                        <nav class="app-pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav><!--//app-pagination-->
+
+                    </div><!--//tab-pane-->
+
+                    <div class="tab-pane fade" id="orders-paid" role="tabpanel" aria-labelledby="orders-paid-tab">
+                        <div class="app-card app-card-orders-table mb-5">
+                            <div class="app-card-body">
+                                <div class="table-responsive">
+
+                                    <table class="table mb-0 text-left" id="myTable">
+                                        <thead>
+                                        <tr>
+                                            <th class="cell">Nom du deal</th>
+                                            <th class="cell">Code postal du deal</th>
+                                            <th class="cell">Nom du commercial</th>
+                                            <th class="cell">Nom du télépro</th>
+                                            <th class="cell">Statut du deal</th>
+                                            <th class="cell">Montant du deal</th>
+                                            <th class="cell">ID du deal</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for deal in valide %}
+                                        <tr>
+                                            <td class="cell">{{ deal.Deal_Name }}</td>
+                                            <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
+                                            <td class="cell">{{ deal.Commercial }}</td>
+                                            <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
+                                            <td class="cell"><span class="badge bg-success">{{ deal.Stage }}</span></td>
+                                            <td class="cell">{{ deal.Montant_de_la_prime }}</td>
+                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div><!--//table-responsive-->
+                            </div><!--//app-card-body-->
+                        </div><!--//app-card-->
+                    </div><!--//tab-pane-->
+
+                    <div class="tab-pane fade" id="orders-pending" role="tabpanel" aria-labelledby="orders-pending-tab">
+                        <div class="app-card app-card-orders-table mb-5">
+                            <div class="app-card-body">
+                                <div class="table-responsive">
+                                    <table class="table mb-0 text-left" id="myTable">
+                                        <thead>
+                                        <tr>
+                                            <th class="cell">Nom du deal</th>
+                                            <th class="cell">Code postal du deal</th>
+                                            <th class="cell">Nom du commercial</th>
+                                            <th class="cell">Nom du télépro</th>
+                                            <th class="cell">Statut du deal</th>
+                                            <th class="cell">Montant du deal</th>
+                                            <th class="cell">ID du deal</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for deal in en_cours %}
+                                            <tr>
+                                                <td class="cell">{{ deal.Deal_Name }}</td>
+                                                <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
+                                                <td class="cell">{{ deal.Commercial }}</td>
+                                                <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
+                                                <td class="cell"><span class="badge bg-warning">{{ deal.Stage }}</span></td>
+                                                <td class="cell">{{ deal.Montant_de_la_prime }}</td>
+                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div><!--//table-responsive-->
+                            </div><!--//app-card-body-->
+                        </div><!--//app-card-->
+                    </div><!--//tab-pane-->
+                    <div class="tab-pane fade" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
+                        <div class="app-card app-card-orders-table mb-5">
+                            <div class="app-card-body">
+                                <div class="table-responsive">
+                                    <table class="table mb-0 text-left" id="myTable">
+                                        <thead>
+                                        <tr>
+                                            <th class="cell">Nom du deal</th>
+                                            <th class="cell">Code postal du deal</th>
+                                            <th class="cell">Nom du commercial</th>
+                                            <th class="cell">Nom du télépro</th>
+                                            <th class="cell">Statut du deal</th>
+                                            <th class="cell">Montant du deal</th>
+                                            <th class="cell">ID du deal</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for deal in refuse %}
+                                            <tr>
+                                                <td class="cell">{{ deal.Deal_Name }}</td>
+                                                <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
+                                                <td class="cell">{{ deal.Commercial }}</td>
+                                                <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
+                                                <td class="cell"><span class="badge bg-danger">{{ deal.Stage }}</span></td>
+                                                <td class="cell">{{ deal.Montant_de_la_prime }}</td>
+                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div><!--//table-responsive-->
+                            </div><!--//app-card-body-->
+                        </div><!--//app-card-->
+                    </div><!--//tab-pane-->
+                </div><!--//tab-content-->
+
+
+
+            </div><!--//container-fluid-->
+        </div><!--//app-content-->
+    </div><!--//app-wrapper-->
+
+
+<script
+        src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+        crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#myTable').DataTable();
+        } );
+</script>
+{% endblock %}

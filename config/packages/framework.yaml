@@ -5,6 +5,14 @@ framework:
     http_method_override: false
     handle_all_throwables: true
 
+#    http_client:
+#        default_options:
+#            headers:
+#                'Accept': '*/*'
+#                'Connection': 'keep-alive'
+#                'Authorization': 'Zoho-oauthtoken %env(ACCESS_TOKEN)%'
+#                'Content-Type': 'application/x-www-form-urlencoded'
+
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.
     session:

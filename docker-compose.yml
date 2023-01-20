@@ -1,21 +1,43 @@
 version: '3'
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-14}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+  ###> doctrine/doctrine-bundle ###
+  db:
+    image: mysql
+    container_name: mysql_ecovair
+    restart: always
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - db-data:/var/lib/mysql
+    ports:
+      - 3307:3306
+
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: 'root'
+    networks:
+      - dev
+
+  phpmyadmin:
+    image: real_phpmyadmin
+    container_name: php_my_admin_ecovair
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8084:80
+    environment:
+      PMA_HOST : db
+    networks:
+      - dev
+
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - "1025:25"
+      - "1080:1080"
+
+networks:
+  dev:
 
 volumes:
-###> doctrine/doctrine-bundle ###
   db-data:
-###< doctrine/doctrine-bundle ###
