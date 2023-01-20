@@ -22,15 +22,6 @@
                         <div class="page-utilities">
                             <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
                                 <div class="col-auto">
-{#                                    <!-- Button trigger modal -->#}
-{#                                    <button type="button" class="btn app-btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">#}
-{#                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download me-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg">#}
-{#                                            <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>#}
-{#                                            <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>#}
-{#                                        </svg>#}
-{#                                        Ajouter un commercial#}
-{#                                    </button>#}
-
                                     <!-- Modal -->
                                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-xl">
@@ -102,7 +93,7 @@
                                             {% endif %}
                                             <td class="cell">{{ deal.Amount }}</td>
                                             <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
-                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup">+ fichier</a></td>
+                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup" onclick="setButtonId({{ deal.id }})">+ fichier</a></td>
                                         </tr>
                                         {% endfor %}
                                         </tbody>
@@ -120,24 +111,19 @@
                                             <div class="form-group row">
                                                 <div class="d-flex justify-content-evenly">
                                                     <label for="staticEmail" class="col-sm-2 col-form-label">Fichier(s)</label>
-                                                    <div class="col-sm-8 row" style="display: flex;position: relative;right: 100px;">
+                                                    <div class="col-sm-8 row" style="display: flex;position: relative;right: 50px;">
                                                         <input type="file" name="insertEmail" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com">
                                                     </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn app-btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" name="nom-complet" id="button-name" aria-expanded="false">
-                                                            Deals
-                                                        </button>
-                                                        <ul class="dropdown-menu" id="dropdown_drop">
-                                                            <button class="dropdown-item" id="button_dropdown" type="button" href="#">test</button>
-                                                        </ul>
-                                                        <input name="nom-complet-input" id="nom-complet-input" hidden>
-                                                    </div>
+
+                                                    <label class="btn app-btn-secondary" type="button"  name="nom-complet" id="button-name" aria-expanded="false">
+                                                        Deal ID:
+                                                    </label>
                                                 </div>
                                             </div>
                                             <div class="mt-xxl-5">
                                                 <label> Ajouter un commentaire :</label>
                                                 <br>
-                                                <input class="p-5 w-100">
+                                                <input class="input-group-text w-100">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -286,5 +272,10 @@
         $(document).ready( function () {
             $('#myTable').DataTable();
         } );
+
+        function setButtonId(id){
+            console.log(id);
+            document.getElementById('button-name').textContent = "Deal Id : " + id;
+        }
 </script>
 {% endblock %}
