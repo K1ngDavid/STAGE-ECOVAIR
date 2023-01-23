@@ -81,17 +81,34 @@ class HomeController extends AbstractController
         ]);
     }
     #[Route('/documents', name: 'app_docs')]
-    public function documents(CallApiService $client): Response
+    public function documents(CallApiService $client,Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 //        dd($client->getDealsByNameCommercial($this->getUser()->getPrenom(). ' ' . $this->getUser()->getNom()));
         $deals = $client->getDealsByNameCommercial($this->getUser()->getPrenom(). ' ' . $this->getUser()->getNom());
         $dealss = $client->getDealsByNameCommercialAndByStatus($this->getUser()->getPrenom(). ' ' . $this->getUser()->getNom());
+        if(isset($_FILES['file']['tmp_name'])){
+//            dd($_FILES);
+//            dd($_FILES['file']);
+//            dd($request->request->get('file'));
+//            dd($client->finalInsertFile($request->request->get('idDeal'))['data'][0]['message']);
+            $response = $client->finalInsertFile($request->request->get('idDeal'))['data'][0]['message'];
+            $this->addFlash('success',$response);
+            return $this->render('deals/index.html.twig',[
+            'controller_name' => 'DealsController',
+            'deals' => $deals,
+            'valide' => $dealss['validé'],
+            'en_cours' => $dealss['en cours'],
+            'refuse' => $dealss['rétracté']
+            ]);
+        }
+//        dd($request);
 //        dd($deals);
 //        dd($this->getUser()->getNom());
-        return $this->render('home/documents.html.twig', [
-            'controller_name' => 'DocsController'
-            ]);
 
+//        return $this->render('deals/index.html.twig', [
+//            'controller_name' => 'DocsController'
+//            ]);
+        return new Response();
     }
 }

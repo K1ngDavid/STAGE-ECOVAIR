@@ -56,7 +56,7 @@
                 <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
                     <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#orders-all" role="tab" aria-controls="orders-all" aria-selected="true">Tous</a>
                     <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#orders-paid" role="tab" aria-controls="orders-paid" aria-selected="false">Validés</a>
-                    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending" aria-selected="false">En attente</a>
+                    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending" aria-selected="false">En cours</a>
                     <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Refusés</a>
                 </nav>
 
@@ -81,20 +81,20 @@
                                         </thead>
                                         <tbody>
                                         {% for deal in deals %}
-                                        <tr>
-                                            <td class="cell">{{ deal.Deal_Name }}</td>
-                                            <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
-                                            <td class="cell">{{ deal.Commercial }}</td>
-                                            <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
-                                            {% if deal.Stage != 'Rétracté' and  deal.Stage !=  'Gagnés fermés' %}
-                                            <td class="cell"><span class="badge bg-warning">{{ deal.Stage }}</span></td>
-                                            {% else %}
-                                            <td class="cell"><span class="badge {{ deal.Stage == 'Rétracté' ? 'bg-danger' : 'bg-success' }}">{{ deal.Stage }}</span></td>
-                                            {% endif %}
-                                            <td class="cell">{{ deal.Amount }}</td>
-                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
-                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup" onclick="setButtonId({{ deal.id }})">+ fichier</a></td>
-                                        </tr>
+                                            <tr>
+                                                <td class="cell">{{ deal.Deal_Name }}</td>
+                                                <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
+                                                <td class="cell">{{ deal.Commercial }}</td>
+                                                <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
+                                                {% if deal.Stage != 'Rétracté' and  deal.Stage !=  'Gagnés fermés' %}
+                                                    <td class="cell"><span class="badge bg-warning">{{ deal.Stage }}</span></td>
+                                                {% else %}
+                                                    <td class="cell"><span class="badge {{ deal.Stage == 'Rétracté' ? 'bg-danger' : 'bg-success' }}">{{ deal.Stage }}</span></td>
+                                                {% endif %}
+                                                <td class="cell">{{ deal.Amount }}</td>
+                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
+                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup" onclick="setButtonId({{ deal.id }})">+ fichier</a></td>
+                                            </tr>
                                         {% endfor %}
                                         </tbody>
                                     </table>
@@ -102,7 +102,7 @@
                             </div><!--//app-card-body-->
                             <div class="modal fade" id="popup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-xl">
-                                    <form class="modal-content" method="post" action="{{ path('app_admin') }}">
+                                    <form class="modal-content" method="post" action="{{ path('app_docs') }}" enctype="multipart/form-data">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Ajouter une pièce jointe</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -112,12 +112,13 @@
                                                 <div class="d-flex justify-content-evenly">
                                                     <label for="staticEmail" class="col-sm-2 col-form-label">Fichier(s)</label>
                                                     <div class="col-sm-8 row" style="display: flex;position: relative;right: 50px;">
-                                                        <input type="file" name="insertEmail" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com">
+                                                        <input type="file" name="file[]" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com" multiple>
                                                     </div>
 
                                                     <label class="btn app-btn-secondary" type="button"  name="nom-complet" id="button-name" aria-expanded="false">
                                                         Deal ID:
                                                     </label>
+                                                    <input name="idDeal" id="idDeal" hidden>
                                                 </div>
                                             </div>
                                             <div class="mt-xxl-5">
@@ -169,15 +170,15 @@
                                         </thead>
                                         <tbody>
                                         {% for deal in valide %}
-                                        <tr>
-                                            <td class="cell">{{ deal.Deal_Name }}</td>
-                                            <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
-                                            <td class="cell">{{ deal.Commercial }}</td>
-                                            <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
-                                            <td class="cell"><span class="badge bg-success">{{ deal.Stage }}</span></td>
-                                            <td class="cell">{{ deal.Montant_de_la_prime }}</td>
-                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
-                                        </tr>
+                                            <tr>
+                                                <td class="cell">{{ deal.Deal_Name }}</td>
+                                                <td class="cell"><span class="truncate">{{ deal.Code_Postal }}</span></td>
+                                                <td class="cell">{{ deal.Commercial }}</td>
+                                                <td class="cell"><span>{{ deal.T_l_pro1 is not null ? deal.T_l_pro1.name : deal.T_l_pro1 }}</span></td>
+                                                <td class="cell"><span class="badge bg-success">{{ deal.Stage }}</span></td>
+                                                <td class="cell">{{ deal.Montant_de_la_prime }}</td>
+                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
+                                            </tr>
                                         {% endfor %}
                                         </tbody>
                                     </table>
@@ -263,19 +264,19 @@
     </div><!--//app-wrapper-->
 
 
-<script
-        src="https://code.jquery.com/jquery-3.6.3.js"
-        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
-        crossorigin="anonymous"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.6.3.js"
+            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready( function () {
             $('#myTable').DataTable();
         } );
-
         function setButtonId(id){
             console.log(id);
             document.getElementById('button-name').textContent = "Deal Id : " + id;
+            document.getElementById('idDeal').value = id;
         }
-</script>
+    </script>
 {% endblock %}
