@@ -41,11 +41,34 @@ class AdminController extends AbstractController
         ]);
     }
     #[Route('/', name: 'app_admin_dashboard')]
-    public function dashboard(UserRepository $userRepository, Request $request,EntityManagerInterface $em,CallApiService $client): Response
+    public function dashboard(CallApiService $client): Response
     {
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
             'user' => $this->getUser(),
+            'nb_commerciaux' => sizeof($client->getAllCommerciaux()),
+            'nb_contrats' => sizeof($client->getNbContrats()['validé']) + sizeof($client->getNbContrats()['rétracté']) + sizeof($client->getNbContrats()['en cours']),
+            'nb_contrats_en_cours' => sizeof($client->getNbContrats()['en cours']),
+            'nb_contrats_valides' => sizeof($client->getNbContrats()['validé']),
+            'nb_contrats_retractes' => sizeof($client->getNbContrats()['rétracté'])
         ]);
     }
+
+    #[Route('/commercial/{id}')]
+    public function showCommercial(int $id,UserRepository $userRepository,CallApiService $client): Response
+    {
+        $user = $userRepository->findOneBy(['id' => $id]);
+        $deals = $client->getDealsByNameCommercial($user->getPrenom(). ' ' . $user->getNom());
+        $dealss = $client->getDealsByNameCommercialAndByStatus($user->getPrenom(). ' ' . $user->getNom());
+//        dd($deals);
+//        dd($this->getUser()->getNom());
+        return $this->render('deals/index.html.twig', [
+            'controller_name' => 'DealsController',
+            'deals' => $deals,
+            'valide' => $dealss['validé'],
+            'en_cours' => $dealss['en cours'],
+            'refuse' => $dealss['rétracté']
+        ]);
+    }
+//
 }

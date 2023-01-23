@@ -153,43 +153,47 @@ class CallApiService
         $curl_options[CURLOPT_RETURNTRANSFER] = true;
         $curl_options[CURLOPT_HEADER] = 1;
         $curl_options[CURLOPT_CUSTOMREQUEST] = "POST";
-        $fileName = $_FILES['file']['name'][0];
-        $filePath = $_FILES['file']['tmp_name'][0];
-        $file = fopen($filePath, "rb");
-        $fileData = fread($file, filesize($filePath));
-        $date = new \DateTime();
-        $current_time_long= $date->getTimestamp();
-        $lineEnd = "\r\n";
+//        dd(sizeof($_FILES['file']['name']));
+        for($i=0;$i < sizeof($_FILES['file']['name']);$i++){
 
-        $hypen = "--";
+            $fileName = $_FILES['file']['name'][$i];
+            $filePath = $_FILES['file']['tmp_name'][$i];
+            $file = fopen($filePath, "rb");
+            $fileData = fread($file, filesize($filePath));
+            $date = new \DateTime();
+            $current_time_long= $date->getTimestamp();
+            $lineEnd = "\r\n";
 
-        $contentDisp = "Content-Disposition: form-data; name=\""."file"."\";filename=\"".$fileName."\"".$lineEnd.$lineEnd;
+            $hypen = "--";
+
+            $contentDisp = "Content-Disposition: form-data; name=\""."file"."\";filename=\"".$fileName."\"".$lineEnd.$lineEnd;
 
 
-        $data = utf8_encode($lineEnd);
-        $boundaryStart = utf8_encode($hypen.(string)$current_time_long.$lineEnd) ;
+            $data = utf8_encode($lineEnd);
+            $boundaryStart = utf8_encode($hypen.(string)$current_time_long.$lineEnd) ;
 
-        $data = $data.$boundaryStart;
+            $data = $data.$boundaryStart;
 
-        $data = $data.utf8_encode($contentDisp);
+            $data = $data.utf8_encode($contentDisp);
 
-        $data = $data.$fileData.utf8_encode($lineEnd);
+            $data = $data.$fileData.utf8_encode($lineEnd);
 
-        $boundaryend = $hypen.(string)$current_time_long.$hypen.$lineEnd.$lineEnd;
+            $boundaryend = $hypen.(string)$current_time_long.$hypen.$lineEnd.$lineEnd;
 
-        $data = $data.utf8_encode($boundaryend);
+            $data = $data.utf8_encode($boundaryend);
 
-        $curl_options[CURLOPT_POSTFIELDS]= $data;
-        $headersArray = array();
+            $curl_options[CURLOPT_POSTFIELDS]= $data;
+            $headersArray = array();
 
-        $headersArray = ['ENCTYPE: multipart/form-data','Content-Type:multipart/form-data;boundary='.(string)$current_time_long];
-        $headersArray[] = "content-type".":"."multipart/form-data";
-        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " .self::$token->access_token;
+            $headersArray = ['ENCTYPE: multipart/form-data','Content-Type:multipart/form-data;boundary='.(string)$current_time_long];
+            $headersArray[] = "content-type".":"."multipart/form-data";
+            $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " .self::$token->access_token;
 
-        $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
-        curl_setopt_array($curl_pointer, $curl_options);
+            $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
+            curl_setopt_array($curl_pointer, $curl_options);
 
-        $result = curl_exec($curl_pointer);
+            $result = curl_exec($curl_pointer);
+        }
         $responseInfo = curl_getinfo($curl_pointer);
         curl_close($curl_pointer);
         list ($headers, $content) = explode("\r\n\r\n", $result, 2);
@@ -266,5 +270,21 @@ class CallApiService
             }
         }
         return $commerciaux;
+    }
+
+    public function getNbContrats(): array
+    {
+        $liste = array();
+        foreach($this->getDeals()['data'] as &$deal){
+                if($deal['Stage'] == "Gagnés fermés"){
+                    $liste['validé'][] = $deal;
+                }elseif($deal['Stage'] == "Rétracté"){
+                    $liste['rétracté'][] = $deal;
+                }else{
+                    $liste['en cours'][]= $deal;
+                }
+        }
+        if(!isset($liste['en cours'])) $liste['en cours'][] = '';
+        return $liste;
     }
 }

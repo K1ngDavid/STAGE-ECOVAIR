@@ -20,3 +20,4 @@
 ###< symfony/phpunit-bridge ###
 
 .env
+php_sdk_token.json

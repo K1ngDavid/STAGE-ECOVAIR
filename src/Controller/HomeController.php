@@ -31,6 +31,7 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(CallApiService $client,Request $request,MailerInterface $mailer): Response
     {
+//        dd("hello");
 //        dd($this->getUser()->getRoles());
         if($this->getUser() == null) return $this->redirectToRoute("app_login");
         elseif($this->getUser()->getRoles()[0] == "ROLE_ADMIN") return $this->redirectToRoute('app_admin');
@@ -40,17 +41,7 @@ class HomeController extends AbstractController
         $nb_deals_valide = sizeof($allDeals['validé']);
         $nb_deals_retractes = sizeof($allDeals['rétracté']);
         $nb_total = sizeof($allDeals['en cours']) +$nb_deals_retractes + $nb_deals_valide;
-//        dd($client->getDealsByNameCommercial("Ilan Kalifa"));
-//        dd($deals);
-//        $client->getDeals();
-//        dd($client);
-//        $client->getRefreshedAccessToken();
-//        dd($deals);
-//        dd($deals[0]['Owner']['email']);
-//        dump($client->getToken());
-//        dump($_ENV['ACCESS_TOKEN']);
-//        dump($client->getDeals()['data']);
-//        dump($client->getAllCommerciaux());
+
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
             'user' => $this->getUser(),
@@ -61,8 +52,6 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-    #[IsGranted('ROLE_USER')]
     #[Route('/deals', name: 'app_deals')]
     public function deals(CallApiService $client): Response
     {
@@ -110,5 +99,15 @@ class HomeController extends AbstractController
 //            'controller_name' => 'DocsController'
 //            ]);
         return new Response();
+    }
+
+    #[Route('/profil','app_profil')]
+    public function profil()
+    {
+        return $this->render('home/profil.html.twig',[
+            'controller_name' => 'ProfilController',
+//            'nom' => $this->getUser()->getNom(),
+//            'prenom' => $this->getUser()->getPrenom(),
+        ]);
     }
 }

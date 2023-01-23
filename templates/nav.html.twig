@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block body %}
+
+    <style>
+        .is_hidden{
+            display: none;
+        }
+    </style>
 <body class="app">
 <header class="app-header fixed-top">
     <div class="app-header-inner">
@@ -17,7 +23,7 @@
                     </div><!--//col-->
                     <div class="app-search-box col">
                         <form class="app-search-form">
-                            <input type="text" placeholder="Search..." name="search" class="form-control search-input">
+                            <input type="search" placeholder="Search..." name="search" class="form-control search-input" id="searchBox" oninput="Search()">
                             <button type="submit" class="btn search-btn btn-primary" value="Search"><i class="fas fa-search"></i></button>
                         </form>
                     </div><!--//app-search-box-->
@@ -124,7 +130,7 @@
                         <div class="app-utility-item app-user-dropdown dropdown">
                             <a class="dropdown-toggle" id="user-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><img src="{{ asset('portal-theme-bs5-master/assets/images/user.png') }}" alt="user profile"></a>
                             <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
-                                <li><a class="dropdown-item" href="account.html">Mon compte</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_profil') }}">Mon compte</a></li>
                                 <li><a class="dropdown-item" href="settings.html">Paramètres</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
@@ -150,10 +156,8 @@
                         <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
                         {% if controller_name == "HomeController" %}
                         <a class="nav-link active" href="{{ path('app_home') }}">
-                            {% elseif controller_name == "AdminController" %}
+                            {% else %}
                             <a class="nav-link" href="{{ path('app_admin_dashboard') }}">
-                                {% else %}
-                                <a class="nav-link" href="{{ path('app_home') }}">
                                 {% endif %}
 						        <span class="nav-icon">
 						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-door" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -242,49 +246,36 @@
                         <div id="submenu-1" class="collapse submenu submenu-1" data-bs-parent="#menu-accordion">
                             <ul class="submenu-list list-unstyled">
                                 <li class="submenu-item"><a class="submenu-link" href="notifications.html">Notifications</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="account.html">Mon compte</a></li>
+                                <li class="submenu-item"><a class="submenu-link" href="{{ path('app_profil') }}">Mon compte</a></li>
                                 <li class="submenu-item"><a class="submenu-link" href="settings.html">Paramètres</a></li>
                             </ul>
                         </div>
                     </li><!--//nav-item-->
-                    <li class="nav-item has-submenu">
-                        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-                        <a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="false" aria-controls="submenu-2">
-						        <span class="nav-icon">
-						        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-columns-gap" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd" d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z"/>
-	</svg>
-						         </span>
-                            <span class="nav-link-text">External</span>
-                            <span class="submenu-arrow">
-		                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-	</svg>
-	                             </span><!--//submenu-arrow-->
-                        </a><!--//nav-link-->
-                        <div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">
-                            <ul class="submenu-list list-unstyled">
-                                <li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="reset-password.html">Reset password</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="404.html">404 page</a></li>
-                            </ul>
-                        </div>
-                    </li><!--//nav-item-->
-
-
-                    <li class="nav-item">
-                        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-                        <a class="nav-link" href="charts.html">
-						        <span class="nav-icon">
-						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bar-chart-line" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd" d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z"/>
-	</svg>
-						         </span>
-                            <span class="nav-link-text">Charts</span>
-                        </a><!--//nav-link-->
-                    </li><!--//nav-item-->
+{#                    <li class="nav-item has-submenu">#}
+{#                        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->#}
+{#                        <a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="false" aria-controls="submenu-2">#}
+{#						        <span class="nav-icon">#}
+{#						        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->#}
+{#						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-columns-gap" fill="currentColor" xmlns="http://www.w3.org/2000/svg">#}
+{#	  <path fill-rule="evenodd" d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z"/>#}
+{#	</svg>#}
+{#						         </span>#}
+{#                            <span class="nav-link-text">External</span>#}
+{#                            <span class="submenu-arrow">#}
+{#		                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">#}
+{#	  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>#}
+{#	</svg>#}
+{#	                             </span><!--//submenu-arrow-->#}
+{#                        </a><!--//nav-link-->#}
+{#                        <div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">#}
+{#                            <ul class="submenu-list list-unstyled">#}
+{#                                <li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>#}
+{#                                <li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li>#}
+{#                                <li class="submenu-item"><a class="submenu-link" href="reset-password.html">Reset password</a></li>#}
+{#                                <li class="submenu-item"><a class="submenu-link" href="404.html">404 page</a></li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    </li><!--//nav-item-->#}
 
                     <li class="nav-item">
                         <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
@@ -362,4 +353,23 @@
 
     <!-- Page Specific JS -->
     <script src="{{ asset('portal-theme-bs5-master/assets/js/app.js') }}"></script>
+
+
+    <script>
+        function Search(){
+            let data = document.querySelectorAll('.app-card');
+
+            let search_query = document.getElementById('searchBox').value;
+
+            for(let i = 0;i < data.length; i++){
+                if(data[i].innerText.toLowerCase()
+                    .includes(search_query.toLowerCase())){
+                    data[i].classList.remove('is_hidden');
+                }else{
+                    data[i].classList.add('is_hidden');
+                }
+            }
+        }
+    </script>
+
 {% endblock %}

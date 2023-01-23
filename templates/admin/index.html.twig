@@ -95,6 +95,7 @@
                                             <th class="cell">Rôle</th>
                                             <th class="cell">Vérifié</th>
                                             <th class="cell"></th>
+                                            <th class="cell"></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -106,7 +107,8 @@
                                             <td class="cell"><span>{{ user.email }}</span><span class="note"></span></td>
                                             <td class="cell"><span class="badge bg-success">{{ user.roles[0] }}</span></td>
                                             <td class="cell">{{ user.isVerified }}</td>
-                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
+                                            <td class="cell"><a class="btn-sm app-btn-secondary" href="./commercial/{{ user.id }}">Voir</a></td>
+                                            <td class="cell"><a class="btn-sm btn-danger" href="./commercial/del/{{ user.id }}">Supprimer</a></td>
                                         </tr>
                                         {% endfor %}
                                         </tbody>
