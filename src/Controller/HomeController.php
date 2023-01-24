@@ -34,10 +34,11 @@ class HomeController extends AbstractController
 //        dd("hello");
 //        dd($this->getUser()->getRoles());
         if($this->getUser() == null) return $this->redirectToRoute("app_login");
-        elseif($this->getUser()->getRoles()[0] == "ROLE_ADMIN") return $this->redirectToRoute('app_admin');
-        $deals = $client->getDeals()['data'];
-        $allDeals = $client->getDealsByNameCommercialAndByStatus($this->getUser()->getPrenom(). ' ' . $this->getUser()->getNom());
-//        dd($allDeals);
+        elseif($this->getUser()->getRoles()[0] == "ROLE_ADMIN") return $this->redirectToRoute('app_admin_dashboard');
+        $nom_complet = $this->getUser()->getPrenom(). ' ' . $this->getUser()->getNom();
+        $allDeals = $client->getDealsByNameCommercialAndByStatus($nom_complet);
+        $liste = $client->getTauxDeConversionByCommercial($nom_complet);
+
         $nb_deals_valide = sizeof($allDeals['validé']);
         $nb_deals_retractes = sizeof($allDeals['rétracté']);
         $nb_total = sizeof($allDeals['en cours']) +$nb_deals_retractes + $nb_deals_valide;
@@ -49,6 +50,8 @@ class HomeController extends AbstractController
             'retracte' => $nb_deals_retractes,
             'en_cours' => sizeof($allDeals['en cours']),
             'nb_total' =>$nb_total,
+            'signatures' => $liste['signatures'],
+            'installations' => $liste['installations']
         ]);
     }
 
@@ -106,6 +109,16 @@ class HomeController extends AbstractController
     {
         return $this->render('home/profil.html.twig',[
             'controller_name' => 'ProfilController',
+//            'nom' => $this->getUser()->getNom(),
+//            'prenom' => $this->getUser()->getPrenom(),
+        ]);
+    }
+
+    #[Route('/aide','app_help')]
+    public function help()
+    {
+        return $this->render('home/help.html.twig',[
+            'controller_name' => 'HelpController',
 //            'nom' => $this->getUser()->getNom(),
 //            'prenom' => $this->getUser()->getPrenom(),
         ]);

@@ -93,6 +93,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     }
 
+    public function delCommercial($id): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "DELETE FROM user WHERE user.id = :id";
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->executeQuery(['id' => $id]);
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

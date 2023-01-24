@@ -55,8 +55,8 @@
 
                 <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
                     <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#orders-all" role="tab" aria-controls="orders-all" aria-selected="true">Tous</a>
-                    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#orders-paid" role="tab" aria-controls="orders-paid" aria-selected="false">Validés</a>
                     <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending" aria-selected="false">En cours</a>
+                    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#orders-paid" role="tab" aria-controls="orders-paid" aria-selected="false">Acceptés</a>
                     <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Refusés</a>
                 </nav>
 
@@ -91,9 +91,9 @@
                                                 {% else %}
                                                     <td class="cell"><span class="badge {{ deal.Stage == 'Rétracté' ? 'bg-danger' : 'bg-success' }}">{{ deal.Stage }}</span></td>
                                                 {% endif %}
-                                                <td class="cell">{{ deal.Amount }}</td>
+                                                <td class="cell">{{ deal.Amount }} €</td>
                                                 <td class="cell"><a class="btn-sm app-btn-secondary" href="#">{{ deal.id }}</a></td>
-                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup" onclick="setButtonId({{ deal.id }})">+ fichier</a></td>
+                                                <td class="cell"><a class="btn-sm app-btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#popup" onclick="setButtonId('{{ deal.id }}')">+ fichier</a></td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -112,7 +112,7 @@
                                                 <div class="d-flex justify-content-evenly">
                                                     <label for="staticEmail" class="col-sm-2 col-form-label">Fichier(s)</label>
                                                     <div class="col-sm-8 row" style="display: flex;position: relative;right: 50px;">
-                                                        <input type="file" name="file[]" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com" multiple>
+                                                        <input type="file" name="file[]" class="form-control-plaintext border rounded" id="staticEmail" placeholder="email@example.com" multiple required>
                                                     </div>
 
                                                     <label class="btn app-btn-secondary" type="button"  name="nom-complet" id="button-name" aria-expanded="false">
@@ -130,19 +130,19 @@
                                 </div>
                             </div>
                         </div><!--//app-card-->
-                        <nav class="app-pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav><!--//app-pagination-->
+{#                        <nav class="app-pagination">#}
+{#                            <ul class="pagination justify-content-center">#}
+{#                                <li class="page-item disabled">#}
+{#                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>#}
+{#                                </li>#}
+{#                                <li class="page-item active"><a class="page-link" href="#">1</a></li>#}
+{#                                <li class="page-item"><a class="page-link" href="#">2</a></li>#}
+{#                                <li class="page-item"><a class="page-link" href="#">3</a></li>#}
+{#                                <li class="page-item">#}
+{#                                    <a class="page-link" href="#">Next</a>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                        </nav><!--//app-pagination-->#}
 
                     </div><!--//tab-pane-->
 

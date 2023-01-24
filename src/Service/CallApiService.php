@@ -30,9 +30,8 @@ class CallApiService
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public  function __construct()
+    public function __construct()
     {
-//        dd("hello45");
         $this->client = HttpClient::create();
         if(file_get_contents('../php_sdk_token.json') == ""){
             $test = $this->setRefreshedAccessToken();
@@ -50,6 +49,7 @@ class CallApiService
 
     public static function getInstance()
     {
+
         $test = self::$token;
         if(is_null(self::$token)){
             self::$token = new CallApiService();
@@ -117,32 +117,6 @@ class CallApiService
             $this->getRefreshedAccessToken();
         }
         return self::$token;
-    }
-
-    public function testInsertFile(){
-//        dd($_FILES['file']);
-        $formFields = [
-            'regular_field' => 'test',
-            'file_field' => DataPart::fromPath($_FILES['file']['tmp_name']),
-        ];
-        $formData = new FormDataPart($formFields);
-        $response = $this->client->request(
-            'POST',
-            'https://www.zohoapis.eu/crm/v2/Deals/13058000000606261/Attachments',
-            [
-                'headers' => [
-                    'Accept' => '*/*',
-                    'Accept-Encoding' => 'gzip, deflate, br',
-                    'Connection' => 'keep-alive',
-                    'Authorization' => 'Zoho-oauthtoken 1000.f3dd4f073e98b8080d9bc1efe964c7f4.ba449e2f5cfb4e9a9a9452244af5cb45',
-                    'Content-Type' => 'multipart/form-data'
-                ],
-                'body' => $formData->bodyToIterable(),
-
-            ]
-        );
-        dd($response);
-        return $response;
     }
 
     public function finalInsertFile($dealId){
@@ -219,30 +193,6 @@ class CallApiService
 
     }
 
-    public function insertFile(){
-//        dd($_FILES['file']);
-        $url ="https://www.zohoapis.eu/crm/v2/Deals/13058000000606261/Attachments";
-        $ch = curl_init();
-        $cfile = new \CURLFile($_FILES['file']['tmp_name'],$_FILES['file']['type'],$_FILES['file']['name']);
-//        dd($cfile);
-        $data = array('file' => $cfile);
-        curl_setopt($ch,CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_POST,1);
-        curl_setopt($ch,CURLOPT_HTTPHEADER, array(
-            'Accept' => '*/*',
-            'Connection' => 'keep-alive',
-            'Authorization' => 'Zoho-oauthtoken 1000.f3dd4f073e98b8080d9bc1efe964c7f4.ba449e2f5cfb4e9a9a9452244af5cb45',
-            'Content-Type' => 'multipart/form-data'
-        ));
-        curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
-
-        $response = curl_exec($ch);
-        if($response){
-            return "File posted";
-        }
-        return "Error : " .curl_error($ch);
-    }
-
     private function getRefreshedAccessToken(){
             $this->accessTokenUrl = $_ENV['ACCOUNT_URL'] . "/oauth/v2/token?refresh_token={$_ENV['REFRESH_TOKEN']}&client_id={$_ENV['CLIENT_ID']}&client_secret={$_ENV['CLIENT_SECRET']}&grant_type=refresh_token";
             $ch = curl_init();
@@ -259,12 +209,18 @@ class CallApiService
             return $result;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function getAllCommerciaux():array
     {
         $response = $this->getDeals()['data'];
         $commerciaux = [];
         foreach ($response as &$value){
-//            dump($value);
             if(!in_array($value['Commercial'],$commerciaux) && $value['Commercial'] != null){
                 $commerciaux[] = $value['Commercial'];
             }
@@ -272,6 +228,13 @@ class CallApiService
         return $commerciaux;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function getNbContrats(): array
     {
         $liste = array();
@@ -285,6 +248,62 @@ class CallApiService
                 }
         }
         if(!isset($liste['en cours'])) $liste['en cours'][] = '';
+        return $liste;
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function getTauxDeConversion():array
+    {
+        $liste = array();
+        $compteur = 0;
+        foreach ($this->getDeals()['data'] as &$deal){
+            if($deal['Stage'] == 'Gagnés fermés' || $deal['Stage'] == 'Installation prévue' || $deal['Stage'] == 'Demande de déblocage de fond'){
+                $compteur+= 1;
+                $liste['installations'] = $compteur;
+            }
+        }
+        $liste['signatures'] = sizeof($this->getDeals()['data']);
+//        dd(sizeof($this->getDeals()['data']));
+        return $liste;
+    }
+
+    public function getTauxDeConversionByCommercial($nomCommercial):array
+    {
+        $liste = array();
+        $liste['signatures'] = 0;
+        $compteur = 0;
+        foreach ($this->getDeals()['data'] as &$deal){
+            if($deal['Commercial'] == $nomCommercial){
+                if($deal['Stage'] == 'Gagnés fermés' || $deal['Stage'] == 'Installation prévue' || $deal['Stage'] == 'Demande de déblocage de fond'){
+                    $compteur+= 1;
+                    $liste['installations'] = $compteur;
+                }
+                $liste['signatures']++;
+            }
+        }
+//        dd(sizeof($this->getDeals()['data']));
+        return $liste;
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function getBestCommerciaux():array
+    {
+        $liste = [];
+        foreach ($this->getAllCommerciaux() as &$commercial){
+            $liste[]= [$commercial,$this->getTauxDeConversionByCommercial($commercial)];
+        }
         return $liste;
     }
 }
