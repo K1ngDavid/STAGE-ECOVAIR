@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+
+    <div class="row g-0 app-auth-wrapper">
+        <div class="col-12 col-md-7 col-lg-6 auth-main-col text-center p-5">
+            <div class="d-flex flex-column align-content-end">
+                <div class="app-auth-body mx-auto">
+                    {{ form_start(resetForm) }}
+                    <div class="app-auth-branding mb-4"><a class="app-logo" href="index.html"><img class="logo-icon me-2" src="{{ asset('images/logo_ecovair_v2.png') }}" alt="logo"></a></div>
+                    <h2 class="auth-heading text-center mb-4">Changement de mot de passe</h2>
+
+                    <div class="auth-form-container text-left">
+
+                        {{ form_row(resetForm.plainPassword) }}
+
+
+
+                        <div class="auth-option text-center pt-5"><button class="btn app-btn-primary btn-block theme-btn mx-auto">Changer de mot de passe</button></div>
+                    </div><!--//auth-form-container-->
+                    {{ form_end(resetForm) }}
+
+                </div><!--//auth-body-->
+            </div><!--//flex-column-->
+        </div><!--//auth-main-col-->
+        <div class="col-12 col-md-5 col-lg-6 h-100 auth-background-col">
+            <img src="{{ asset('portal-theme-bs5-master/assets/images/background/background-3.jpg') }}" style="width: 100%;background-size:cover;height:100vh;min-height:100%">
+            <div class="auth-background-mask"></div>
+            <div class="auth-background-overlay p-3 p-lg-5">
+                <div class="d-flex flex-column align-content-end h-100">
+                    <div class="h-100"></div>
+                    <div class="overlay-content p-3 p-lg-4 rounded">
+                        <h5 class="mb-3 overlay-title">Explore Portal Admin Template</h5>
+                        <div>Portal is a free Bootstrap 5 admin dashboard template. You can download and view the template license <a href="https://themes.3rdwavemedia.com/bootstrap-templates/admin-dashboard/portal-free-bootstrap-admin-dashboard-template-for-developers/">here</a>.</div>
+                    </div>
+                </div>
+            </div><!--//auth-background-overlay-->
+        </div><!--//auth-background-col-->
+
+    </div><!--//row-->
+
+
+{% endblock %}

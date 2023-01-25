@@ -1,5 +1,12 @@
-{% include 'base.html.twig' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
 {% block body %}
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
     <div class="container mb-5">
         <div class="row">
             <div class="col-12 col-md-11 col-lg-7 col-xl-6 mx-auto">
@@ -8,14 +15,16 @@
 
                 </div><!--//app-branding-->
                 <div class="app-card p-5 text-center shadow-sm">
-                    <h1 class="page-title mb-4">Confirmation d'email<br><span class="font-weight-light">Salut {{ user.email }}</span></h1>
+                    <h1 class="page-title mb-4">Changer de mot de passe<br><span class="font-weight-light"></span></h1>
                     <div class="mb-4">
-                        Cliques sur le lien qu'on t'a envoyé en email ;)
+                        {{ form_start(requestForm) }}
+                        {{ form_row(requestForm.email) }}
                     </div>
-                    <a class="btn app-btn-primary" href="{{ path('app_home') }}">Go to home page</a>
+                    <button class="btn btn-primary">Changer son mot de passe</button>
                 </div>
             </div><!--//col-->
         </div><!--//row-->
     </div><!--//container-->
 
+    {{ form_end(requestForm) }}
 {% endblock %}

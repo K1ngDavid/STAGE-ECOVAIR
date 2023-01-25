@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Password Reset Email Sent{% endblock %}
+
+{% block body %}
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-12 col-md-11 col-lg-7 col-xl-6 mx-auto">
+                    <div class="app-branding text-center mb-5">
+                        <a class="app-logo"><img class="logo-icon me-2" src="{{ asset('images/logo_ecovair_v2.png') }}" alt="logo"><span class="logo-text">ECOVAIR</span></a>
+
+                    </div><!--//app-branding-->
+                    <div class="app-card p-5 text-center shadow-sm">
+                        <h1 class="page-title mb-4">Changement de mot de passe<br><span class="font-weight-light"></span></h1>
+                        <div class="mb-4">
+                            Cliques sur le lien qu'on t'a envoyé en email ;)<br>
+                            Il expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}
+                        </div>
+{#                        <a class="btn app-btn-primary" href="{{ path('app_home') }}">Go to home page</a>#}
+                    </div>
+                </div><!--//col-->
+            </div><!--//row-->
+        </div><!--//container-->
+
+{% endblock %}
