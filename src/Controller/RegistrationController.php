@@ -37,43 +37,45 @@ class RegistrationController extends AbstractController
         if ($request->isMethod("POST") && $request->request->get('email') != null) {
             if($userRepository->isCommercial($request->request->get('email'))) {
                 $user = $userRepository->isCommercial($request->request->get('email'));
-                // encode the plain password
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $request->request->get('plainPassword')
-                    )
-                );
-
-                $entityManager->persist($user);
-                $entityManager->flush();
-
-                // generate a signed url and email it to the user
-                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                    (new TemplatedEmail())
-                        ->from(new Address('david.roufe@gmail.com', 'Security'))
-                        ->to($user->getEmail())
-                        ->subject('Confirmer votre email')
-                        ->htmlTemplate('registration/confirmation_email.html.twig')
-                );
-                // do anything else you need here, like send an email
-
-                $userAuthenticator->authenticateUser(
+            $user = new User();
+            $user->setEmail($request->request->get('email'));
+            // encode the plain password
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
                     $user,
-                    $authenticator,
-                    $request
-                );
-                return $this->render('registration/after_registration.html.twig', [
-                    'user' => $user
-                ]);
-            }
-            else{
-                return $this->render('registration/not_commercial.html.twig');
-            }
-        }
+                    $request->request->get('plainPassword')
+                )
+            );
 
-        return $this->render('registration/register.html.twig', [
-        ]);
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // generate a signed url and email it to the user
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('david.roufe@gmail.com', 'Security'))
+                    ->to($user->getEmail())
+                    ->subject('Confirmer votre email')
+                    ->htmlTemplate('registration/confirmation_email.html.twig')
+            );
+            // do anything else you need here, like send an email
+
+            $userAuthenticator->authenticateUser(
+                $user,
+                $authenticator,
+                $request
+            );
+            return $this->render('registration/after_registration.html.twig', [
+                'user' => $user
+            ]);
+        }
+        else{
+            return $this->render('registration/not_commercial.html.twig');
+        }
+    }
+
+    return $this->render('registration/register.html.twig', [
+    ]);
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]

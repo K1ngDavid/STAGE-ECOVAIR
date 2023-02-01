@@ -38,7 +38,7 @@ class CallApiService
             file_put_contents('../php_sdk_token.json',json_encode($test));
         }
         self::$token = json_decode(file_get_contents('../php_sdk_token.json'));
-        dump(self::$token);
+//        dump(self::$token);
         file_put_contents('../php_sdk_token.json',json_encode($this->setRefreshedAccessToken()));
 //        dd(self::$token);
 //        else{

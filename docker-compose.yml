@@ -1,43 +1,46 @@
-version: '3'
-
+version: "3.8"
 services:
-  ###> doctrine/doctrine-bundle ###
+
   db:
     image: mysql
-    container_name: mysql_ecovair
+    container_name: db_docker_symfony
     restart: always
     volumes:
       - db-data:/var/lib/mysql
-    ports:
-      - 3307:3306
-
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      MYSQL_ROOT_PASSWORD: 'root'
     networks:
       - dev
+    ports:
+      - "3307:3306"
 
   phpmyadmin:
-    image: real_phpmyadmin
-    container_name: php_my_admin_ecovair
+    image: phpmyadmin
+    container_name: phpmyadmin_docker_symfony
     restart: always
     depends_on:
       - db
     ports:
-      - 8084:80
+      - 8080:80
     environment:
-      PMA_HOST : db
+      PMA_HOST: db
     networks:
       - dev
 
-  mailer:
-    image: schickling/mailcatcher
+  maildev:
+    image: maildev/maildev
+    container_name: maildev_docker_symfony
+    command: bin/maildev --web 80 --smtp 25 --hide-extensions STARTTLS
     ports:
-      - "1025:25"
-      - "1080:1080"
+      - "1080:80"
+      - "25:25"
+    restart: always
+    networks:
+      - dev
 
 networks:
   dev:
 
 volumes:
   db-data:
+
